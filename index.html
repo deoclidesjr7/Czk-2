@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>CZK MAKI | Haute Gastronomie Japonaise</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Premium Background Cinematográfico 4K com overlay dinâmico */
+        .hero-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            object-fit: cover;
+            filter: brightness(0.4) contrast(1.15) saturate(1.1);
+            transform: scale(1.02);
+            animation: slowZoom 20s ease-in-out infinite alternate;
+        }
+        @keyframes slowZoom {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.08); }
+        }
+        .bg-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 30% 20%, rgba(0,0,0,0.7), rgba(0,0,0,0.92));
+            z-index: -1;
+        }
+        /* Elegância em Vermelho, Preto e Branco */
+        .btn-primary { background: linear-gradient(135deg, #dc2626, #991b1b); transition: all 0.25s ease; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 25px -5px rgba(220,38,38,0.4); }
+        .carousel-container {
+            overflow-x: auto;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            cursor: grab;
+        }
+        .carousel-container:active { cursor: grabbing; }
+        .carousel-container::-webkit-scrollbar { display: none; }
+        .card-hover { transition: all 0.25s; }
+        .card-hover:hover { transform: translateY(-5px); border-color: #dc2626; box-shadow: 0 20px 25px -12px rgba(0,0,0,0.5); }
+        input, select, textarea { color-scheme: dark; outline: none; }
+        .glass-panel { background: rgba(0,0,0,0.55); backdrop-filter: blur(12px); border: 1px solid rgba(220,38,38,0.25); }
+        .smooth-tab { transition: all 0.2s ease; }
+    </style>
+</head>
+<body class="text-white font-sans antialiased">
+
+    <!-- Background Cinematográfico 4K - Vídeo Sushi Premium -->
+    <video autoplay loop muted playsinline class="hero-bg">
+        <source src="https://cdn.pixabay.com/video/2023/01/11/146309-791644948_large.mp4" type="video/mp4">
+    </video>
+    <div class="bg-overlay"></div>
+
+    <!-- TELA DE CADASTRO INICIAL (Luxo) -->
+    <div id="screen-auth" class="fixed inset-0 z-50 flex flex-col justify-center items-center p-6">
+        <div class="w-full max-w-md glass-panel p-8 rounded-3xl shadow-2xl text-center animate-fade-in">
+            <div class="text-5xl font-black tracking-widest text-red-600 mb-2 drop-shadow-lg">CZK MAKI</div>
+            <p class="text-[11px] tracking-[0.35em] text-white/60 uppercase mb-8">Haute Gastronomie Japonaise</p>
+            <form id="form-cadastro" class="space-y-5 text-left" onsubmit="salvarCadastro(event)">
+                <div>
+                    <label class="text-[11px] text-white/50 uppercase tracking-wider font-semibold">Nome Completo</label>
+                    <input type="text" id="cad-nome" required class="w-full bg-black/60 border border-red-900/50 rounded-xl p-3 text-sm focus:border-red-500 focus:ring-1 focus:ring-red-500 transition text-white mt-1">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div><label class="text-[11px] text-white/50">E-mail</label><input type="email" id="cad-email" required class="w-full bg-black/60 border border-red-900/50 rounded-xl p-3 text-sm focus:border-red-500"></div>
+                    <div><label class="text-[11px] text-white/50">WhatsApp</label><input type="tel" id="cad-whats" placeholder="(00) 00000-0000" required class="w-full bg-black/60 border border-red-900/50 rounded-xl p-3 text-sm"></div>
+                </div>
+                <div><label class="text-[11px] text-white/50">Endereço de Entrega</label><input type="text" id="cad-end" required class="w-full bg-black/60 border border-red-900/50 rounded-xl p-3 text-sm"></div>
+                <button type="submit" class="w-full btn-primary text-white font-bold p-3 rounded-xl shadow-lg shadow-red-900/30 mt-2">EXPERIÊNCIA GASTRONÔMICA</button>
+            </form>
+            <button onclick="abrirLoginProprietario()" class="text-[11px] text-red-400/70 hover:text-red-400 mt-5 block mx-auto underline font-mono">🔐 Área do Proprietário</button>
+        </div>
+    </div>
+
+    <!-- MODAL LOGIN ADMIN -->
+    <div id="modal-login-admin" class="fixed inset-0 z-50 bg-black/95 hidden flex justify-center items-center p-4">
+        <div class="bg-zinc-900 border border-red-700 rounded-2xl p-6 w-full max-w-sm shadow-2xl">
+            <h3 class="text-xl font-bold text-red-500 mb-4 flex items-center gap-2"><i class="fa-solid fa-crown"></i> Acesso Restrito</h3>
+            <input type="password" id="admin-senha" placeholder="Senha Mestra" class="w-full bg-black border border-red-700 rounded-xl p-3 mb-4 text-white">
+            <button onclick="verificarLoginAdmin()" class="w-full btn-primary py-2 rounded-xl font-bold">Acessar Painel</button>
+            <button onclick="fecharLoginAdmin()" class="w-full mt-2 text-white/40 text-sm">Cancelar</button>
+        </div>
+    </div>
+
+    <!-- PAINEL DO PROPRIETÁRIO COMPLETO (Dados, Cardápio, Taxas) -->
+    <div id="screen-admin" class="fixed inset-0 z-50 bg-black/95 hidden flex-col overflow-y-auto p-4 backdrop-blur-sm">
+        <div class="max-w-4xl mx-auto w-full space-y-6 pb-20">
+            <div class="flex justify-between items-center border-b border-red-700 pb-4">
+                <h2 class="text-2xl font-bold text-red-500"><i class="fa-solid fa-sliders-h mr-2"></i>Executive Dashboard</h2>
+                <button onclick="fecharPainelAdmin()" class="text-white/60 text-3xl hover:text-red-400">&times;</button>
+            </div>
+            <div class="flex gap-3 border-b border-white/10 pb-2 flex-wrap">
+                <button onclick="switchAdminTab('dados')" id="tab-dados-btn" class="tab-admin-btn px-5 py-2 rounded-full bg-red-900/30 text-red-400 font-semibold">🏢 Estabelecimento</button>
+                <button onclick="switchAdminTab('cardapio')" id="tab-cardapio-btn" class="tab-admin-btn px-5 py-2 rounded-full text-white/70">🍣 Cardápio</button>
+                <button onclick="switchAdminTab('taxas')" id="tab-taxas-btn" class="tab-admin-btn px-5 py-2 rounded-full text-white/70">🚚 Taxas de Entrega</button>
+            </div>
+
+            <!-- Aba Dados -->
+            <div id="tab-dados" class="admin-tab space-y-4">
+                <div class="bg-zinc-900/70 p-6 rounded-2xl border border-red-900/40">
+                    <div class="grid md:grid-cols-2 gap-5">
+                        <div><label class="text-white/50 text-sm">Nome</label><input type="text" id="prop-nome" value="CZK MAKI" class="w-full bg-black border border-red-800 rounded-xl p-3"></div>
+                        <div><label class="text-white/50 text-sm">CNPJ</label><input type="text" id="prop-cnpj" value="12.345.678/0001-99" class="w-full bg-black border border-red-800 rounded-xl p-3"></div>
+                        <div><label class="text-white/50 text-sm">WhatsApp (código DDI)</label><input type="text" id="prop-whats" value="5547999999999" class="w-full bg-black border border-red-800 rounded-xl p-3"></div>
+                        <div><label class="text-white/50 text-sm">Endereço Completo</label><input type="text" id="prop-end" value="Av. Atlântica, 1500 - Centro, Balneário Camboriú - SC" class="w-full bg-black border border-red-800 rounded-xl p-3"></div>
+                    </div>
+                    <div class="mt-4"><label class="text-white/50 text-sm">Embed Google Maps</label><input type="text" id="prop-mapa" value="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3554.433728612716!2d-48.627732!3d-26.984715!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjbCsDU5JzA1LjAiUyA0OMKwMzcnMzkuOCJX!5e0!3m2!1spt-BR!2sbr!4v1625000000000" class="w-full bg-black border border-red-800 rounded-xl p-3"></div>
+                    <button onclick="salvarConfiguracoes()" class="mt-6 w-full bg-emerald-700 hover:bg-emerald-800 py-3 rounded-xl font-bold transition">Salvar Dados</button>
+                </div>
+            </div>
+
+            <!-- Aba Cardápio Edição Completa -->
+            <div id="tab-cardapio" class="admin-tab hidden space-y-4">
+                <div class="bg-zinc-900/70 p-5 rounded-2xl">
+                    <h3 class="text-xl font-semibold text-red-400 mb-4">Editar Itens do Cardápio</h3>
+                    <div id="admin-cardapio-list" class="space-y-4 max-h-[55vh] overflow-y-auto pr-2"></div>
+                    <button onclick="salvarCardapioAdmin()" class="mt-6 w-full bg-red-700 hover:bg-red-800 py-3 rounded-xl font-bold">Salvar Cardápio</button>
+                </div>
+            </div>
+
+            <!-- Aba Taxas de Entrega -->
+            <div id="tab-taxas" class="admin-tab hidden space-y-4">
+                <div class="bg-zinc-900/70 p-5 rounded-2xl">
+                    <h3 class="text-xl font-bold text-red-400">🗺️ Regiões & Taxas</h3>
+                    <div id="taxas-container" class="space-y-2 mt-4"></div>
+                    <button onclick="adicionarRegiaoTaxa()" class="mt-3 bg-white/10 hover:bg-white/20 py-2 px-5 rounded-full text-sm transition"><i class="fa-solid fa-plus"></i> Nova Região</button>
+                    <button onclick="salvarTaxasAdmin()" class="mt-5 w-full bg-emerald-700 py-3 rounded-xl font-bold">Salvar Taxas</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- APP PRINCIPAL -->
+    <div id="app-main" class="hidden relative z-10 pb-28">
+        <header class="p-5 text-center border-b border-white/10 bg-black/40 sticky top-0 z-30 backdrop-blur-xl">
+            <h1 class="text-3xl font-black tracking-widest text-white label-nome-loja drop-shadow">CZK MAKI</h1>
+            <p class="text-[10px] uppercase tracking-[0.3em] text-red-500 font-bold">Haute Gastronomie Japonaise</p>
+        </header>
+        <main class="pb-24">
+            <!-- Carrossel Touch Premium -->
+            <section class="mt-6">
+                <div class="flex justify-between items-center px-6 mb-2"><h2 class="text-xs uppercase tracking-widest text-white/70 font-bold"><i class="fa-regular fa-gem text-red-500 mr-2"></i>Seleção do Chef</h2><span class="text-[10px] text-white/40">← deslize →</span></div>
+                <div class="carousel-container w-full overflow-x-auto py-4 px-4 flex gap-5" id="carouselDestaques"></div>
+            </section>
+
+            <!-- Filtros Cardápio -->
+            <section class="mt-8 px-6">
+                <div class="flex space-x-4 overflow-x-auto no-scrollbar border-b border-white/10 pb-3">
+                    <button onclick="filtrarCategoria('promocao')" class="tab-filter font-semibold text-sm px-1 py-2 text-red-500 border-b-2 border-red-500">PROMOÇÕES</button>
+                    <button onclick="filtrarCategoria('combinados')" class="tab-filter text-white/60 text-sm">COMBINADOS</button>
+                    <button onclick="filtrarCategoria('combos')" class="tab-filter text-white/60 text-sm">COMBOS</button>
+                    <button onclick="filtrarCategoria('hot')" class="tab-filter text-white/60 text-sm">HOT ROLLS</button>
+                    <button onclick="filtrarCategoria('bebidas')" class="tab-filter text-white/60 text-sm">BEBIDAS</button>
+                </div>
+                <div id="cardapio-itens" class="mt-6 space-y-4"></div>
+            </section>
+
+            <footer class="mt-12 p-6 border-t border-white/10 bg-black/50 text-center text-xs text-white/50 space-y-4">
+                <div class="font-bold text-lg text-white label-nome-loja">CZK MAKI</div>
+                <div class="space-y-2 text-white/60"><p id="footer-endereco"><i class="fa-solid fa-location-dot text-red-500 mr-2"></i>Av. Atlântica, 1500</p><p id="footer-whats"><i class="fa-brands fa-whatsapp text-green-500 mr-2"></i>(47) 99999-9999</p><p id="footer-cnpj">CNPJ: 12.345.678/0001-99</p></div>
+                <div class="w-full h-44 rounded-xl overflow-hidden border border-white/10 shadow-lg"><iframe id="footer-mapa-frame" class="w-full h-full border-0"></iframe></div>
+            </footer>
+        </main>
+        <!-- Botão Carrinho Flutuante -->
+        <div class="fixed bottom-5 left-1/2 transform -translate-x-1/2 z-50 w-auto px-4">
+            <button onclick="abrirCarrinhoModal()" class="bg-gradient-to-r from-red-700 to-red-600 hover:from-red-800 hover:to-red-700 text-white font-black px-8 py-4 rounded-full shadow-2xl flex items-center gap-3 text-lg shadow-red-900/40 transition-all"><i class="fa-solid fa-bag-shopping"></i> Meu Carrinho • <span id="carrinho-total-resumo" class="bg-white/20 px-3 py-1 rounded-full">R$ 0,00</span></button>
+        </div>
+    </div>
+
+    <!-- MODAL CARRINHO COMPLETO (Pix / Cartão / Retirada + Taxa entrega automática) -->
+    <div id="cart-modal" class="fixed inset-0 z-50 bg-black/95 hidden justify-center items-center p-4">
+        <div class="bg-zinc-900 w-full max-w-lg rounded-2xl border border-red-700 shadow-2xl overflow-hidden">
+            <div class="bg-red-900/30 p-4 flex justify-between items-center border-b border-red-800"><h2 class="text-2xl font-bold text-red-500"><i class="fa-solid fa-receipt"></i> Seu Pedido</h2><button onclick="fecharCarrinhoModal()" class="text-3xl text-white/70 hover:text-red-400">&times;</button></div>
+            <div class="p-5">
+                <div id="carrinho-lista" class="space-y-2 max-h-60 overflow-y-auto mb-4"></div>
+                <div class="border-t border-white/20 pt-4 space-y-2">
+                    <p class="flex justify-between text-white/80"><span>Subtotal:</span><span id="cart-subtotal" class="font-mono">R$ 0,00</span></p>
+                    <p class="flex justify-between text-red-400"><span>🚚 Taxa de Entrega:</span><span id="cart-frete" class="font-mono">R$ 0,00</span></p>
+                    <p class="flex justify-between text-xl font-black mt-2 pt-2 border-t border-white/20"><span>TOTAL:</span><span id="cart-total-final" class="text-red-500 text-2xl">R$ 0,00</span></p>
+                </div>
+                <div class="mt-5"><label class="text-sm text-white/70 font-semibold">💳 Forma de Pagamento</label><select id="payment-method" class="w-full bg-black border border-red-700 rounded-xl p-3 mt-1 text-white"><option value="pix">📲 PIX (QR Code instantâneo)</option><option value="card">💳 Cartão de Crédito/Débito</option><option value="retirada">🏪 Pagamento na Retirada</option></select></div>
+                <button onclick="finalizarPedidoCompleto()" class="w-full btn-primary py-3 rounded-xl font-bold mt-6 text-white shadow-lg">Confirmar Pedido</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Dados Globais
+        let clienteLogado = null;
+        let carrinho = [];
+        let cardapioProdutos = [
+            { id:1, nome:"Sunomono Premium", preco:29.9, categoria:"promocao", img:"https://images.unsplash.com/photo-1617196034796-73dfa7b1fd56?w=300", desc:"Pepino, kani e gergelim com toque yuzu." },
+            { id:2, nome:"Combinado Omakase (24pçs)", preco:210, categoria:"combinados", img:"https://images.unsplash.com/photo-1583623025817-d180a2221d0a?w=300", desc:"Seleção exclusiva do chef." },
+            { id:3, nome:"Combo Galera VIP (40pçs)", preco:280, categoria:"combos", img:"https://images.unsplash.com/photo-1633478062482-790e3b5dd810?w=300", desc:"Uramakis, hossomakis e joys." },
+            { id:4, nome:"Hot Philadelphia Trufado", preco:45, categoria:"hot", img:"https://images.unsplash.com/photo-1559410545-0bdcd187e0a6?w=300", desc:"Cream cheese, salmão e azeite trufado." },
+            { id:5, nome:"Sake Premium Importado", preco:120, categoria:"bebidas", img:"https://images.unsplash.com/photo-1608885898957-a599fb18de36?w=300", desc:"Garrafa 720ml - harmonização perfeita." },
+            { id:6, nome:"Combo Prime CZK", preco:189, categoria:"promocao", img:"https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=300", desc:"Salmão trufado, caviar e 20pçs." },
+            { id:7, nome:"Nigiri de Atum Foie Gras", preco:48, categoria:"promocao", img:"https://images.unsplash.com/photo-1611143669185-af224c5e3252?w=300", desc:"Atum selado, foie gras e flor de sal." },
+            { id:8, nome:"Maki Black Experience", preco:99.9, categoria:"promocao", img:"https://images.unsplash.com/photo-1553621042-f6e147245754?w=300", desc:"16 peças com gergelim preto e wasabi." }
+        ];
+        let taxasEntrega = [{ regiao:"Centro", valor:5.0 },{ regiao:"Praia Brava", valor:12.0 },{ regiao:"Norte", valor:8.0 }];
+        let configLoja = { nome:"CZK MAKI", cnpj:"12.345.678/0001-99", whatsapp:"5547999999999", endereco:"Av. Atlântica, 1500 - Centro, Balneário Camboriú - SC", mapaUrl:"https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3554.433728612716!2d-48.627732!3d-26.984715!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjbCsDU5JzA1LjAiUyA0OMKwMzcnMzkuOCJX!5e0!3m2!1spt-BR!2sbr!4v1625000000000" };
+        
+        function carregarStorage() { let c=localStorage.getItem("cardapio_admin"); if(c) cardapioProdutos=JSON.parse(c); let t=localStorage.getItem("taxas_entrega"); if(t) taxasEntrega=JSON.parse(t); let l=localStorage.getItem("config_loja"); if(l) configLoja=JSON.parse(l); aplicarConfig(); renderCardapioUI(); renderDestaques(); }
+        function aplicarConfig(){ document.querySelectorAll('.label-nome-loja').forEach(el=>el.innerText=configLoja.nome); if(document.getElementById('footer-endereco')) document.getElementById('footer-endereco').innerHTML=`<i class="fa-solid fa-location-dot text-red-500 mr-2"></i>${configLoja.endereco}`; if(document.getElementById('footer-whats')) document.getElementById('footer-whats').innerHTML=`<i class="fa-brands fa-whatsapp text-green-500 mr-2"></i>${configLoja.whatsapp}`; if(document.getElementById('footer-cnpj')) document.getElementById('footer-cnpj').innerText=`CNPJ: ${configLoja.cnpj}`; if(document.getElementById('footer-mapa-frame')) document.getElementById('footer-mapa-frame').src=configLoja.mapaUrl; }
+        function salvarConfiguracoes(){ configLoja.nome=document.getElementById('prop-nome').value; configLoja.cnpj=document.getElementById('prop-cnpj').value; configLoja.whatsapp=document.getElementById('prop-whats').value; configLoja.endereco=document.getElementById('prop-end').value; configLoja.mapaUrl=document.getElementById('prop-mapa').value; localStorage.setItem("config_loja",JSON.stringify(configLoja)); aplicarConfig(); alert("✅ Configurações salvas!"); }
+        function renderCardapioAdmin(){ const container=document.getElementById('admin-cardapio-list'); if(!container) return; container.innerHTML=cardapioProdutos.map(prod=>`<div class="bg-black/70 p-4 rounded-xl admin-prod-item border border-red-900" data-id="${prod.id}"><input class="admin-nome w-full bg-zinc-800 p-2 rounded mb-2" value="${prod.nome}"><div class="flex gap-2"><input class="admin-preco w-1/2 bg-zinc-800 p-2 rounded" value="${prod.preco}" type="number" step="0.01"><select class="admin-cat w-1/2 bg-zinc-800 p-2 rounded"><option ${prod.categoria=="promocao"?"selected":""}>promocao</option><option ${prod.categoria=="combinados"?"selected":""}>combinados</option><option ${prod.categoria=="combos"?"selected":""}>combos</option><option ${prod.categoria=="hot"?"selected":""}>hot</option><option ${prod.categoria=="bebidas"?"selected":""}>bebidas</option></select></div><input class="admin-img w-full bg-zinc-800 p-2 rounded mt-2" value="${prod.img}"><textarea class="admin-desc w-full bg-zinc-800 p-2 rounded mt-2">${prod.desc}</textarea><button onclick="removerProdutoAdmin(${prod.id})" class="text-red-400 text-sm mt-2"><i class="fa-regular fa-trash-can"></i> Excluir</button></div>`).join(''); }
+        function removerProdutoAdmin(id){ cardapioProdutos=cardapioProdutos.filter(p=>p.id!==id); renderCardapioAdmin(); }
+        function salvarCardapioAdmin(){ let novos=[]; document.querySelectorAll('.admin-prod-item').forEach(el=>{ novos.push({ id:parseInt(el.dataset.id), nome:el.querySelector('.admin-nome').value, preco:parseFloat(el.querySelector('.admin-preco').value), categoria:el.querySelector('.admin-cat').value, img:el.querySelector('.admin-img').value, desc:el.querySelector('.admin-desc').value })}); cardapioProdutos=novos; localStorage.setItem("cardapio_admin",JSON.stringify(cardapioProdutos)); renderCardapioUI(); renderDestaques(); alert("📋 Cardápio atualizado!"); }
+        function renderTaxasAdmin(){ const cont=document.getElementById('taxas-container'); if(cont) cont.innerHTML=taxasEntrega.map((t,idx)=>`<div class="flex gap-3 items-center bg-black/40 p-2 rounded"><input class="bg-black border border-red-800 p-2 rounded w-1/2" value="${t.regiao}" onchange="taxasEntrega[${idx}].regiao=this.value"><input type="number" step="0.5" class="bg-black border border-red-800 p-2 rounded w-1/3" value="${t.valor}" onchange="taxasEntrega[${idx}].valor=parseFloat(this.value)"><button onclick="taxasEntrega.splice(${idx},1);renderTaxasAdmin()" class="text-red-500 text-xl">🗑️</button></div>`).join(''); }
+        function adicionarRegiaoTaxa(){ taxasEntrega.push({regiao:"Nova Região",valor:0}); renderTaxasAdmin(); }
+        function salvarTaxasAdmin(){ localStorage.setItem("taxas_entrega",JSON.stringify(taxasEntrega)); alert("🚚 Taxas salvas!"); }
+        function switchAdminTab(tab){ document.querySelectorAll('.admin-tab').forEach(t=>t.classList.add('hidden')); document.getElementById(`tab-${tab}`).classList.remove('hidden'); if(tab==='cardapio') renderCardapioAdmin(); if(tab==='taxas') renderTaxasAdmin(); }
+        function abrirLoginProprietario(){ document.getElementById('modal-login-admin').classList.remove('hidden'); }
+        function fecharLoginAdmin(){ document.getElementById('modal-login-admin').classList.add('hidden'); }
+        function verificarLoginAdmin(){ const s=document.getElementById('admin-senha').value; if(s==="admin123"){ fecharLoginAdmin(); document.getElementById('screen-admin').classList.remove('hidden'); }else alert("Senha inválida!"); }
+        function fecharPainelAdmin(){ document.getElementById('screen-admin').classList.add('hidden'); }
+        function salvarCadastro(e){ e.preventDefault(); clienteLogado={ nome:document.getElementById('cad-nome').value, email:document.getElementById('cad-email').value, whatsapp:document.getElementById('cad-whats').value, endereco:document.getElementById('cad-end').value }; document.getElementById('screen-auth').classList.add('hidden'); document.getElementById('app-main').classList.remove('hidden'); atualizarResumo(); }
+        function renderCardapioUI(){ const container=document.getElementById('cardapio-itens'); if(!container) return; container.innerHTML=''; cardapioProdutos.forEach(prod=>{ let div=document.createElement('div'); div.className=`item-cardapio ${prod.categoria!=='promocao'?'hidden':''}`; div.setAttribute('data-categoria',prod.categoria); div.innerHTML=`<div class="bg-black/50 hover:bg-black/70 p-3 rounded-2xl flex items-center border border-red-900/30 gap-4 transition card-hover"><img src="${prod.img}" class="w-20 h-20 object-cover rounded-xl shadow"><div class="flex-grow"><h4 class="font-bold text-white">${prod.nome}</h4><p class="text-xs text-white/50">${prod.desc}</p><div class="flex justify-between mt-2"><span class="text-red-500 font-black">R$ ${prod.preco.toFixed(2)}</span><button onclick="adicionarAoCarrinho('${prod.nome.replace(/'/g,"\\'")}', ${prod.preco})" class="bg-red-700 hover:bg-red-600 text-white text-xs px-4 py-1.5 rounded-full transition">Adicionar</button></div></div></div>`; container.appendChild(div); }); }
+        function renderDestaques(){ const destaques=cardapioProdutos.filter(p=>p.categoria==='promocao'); const carrDiv=document.getElementById('carouselDestaques'); if(carrDiv) carrDiv.innerHTML=destaques.map(p=>`<div class="w-72 bg-black/60 rounded-2xl border border-red-800/70 flex-shrink-0 overflow-hidden card-hover"><img src="${p.img}" class="w-full h-44 object-cover"><div class="p-4"><div class="text-red-400 text-[10px] font-bold uppercase">Assinatura CZK</div><h3 class="font-bold text-lg">${p.nome}</h3><p class="text-xs text-white/60 line-clamp-2">${p.desc}</p><div class="flex justify-between items-center mt-3"><span class="text-red-500 font-black text-xl">R$ ${p.preco.toFixed(2)}</span><button onclick="adicionarAoCarrinho('${p.nome.replace(/'/g,"\\'")}', ${p.preco})" class="bg-white text-black px-4 py-1.5 rounded-full text-xs font-bold hover:bg-red-500 hover:text-white transition">Pedir</button></div></div></div>`).join(''); }
+        function filtrarCategoria(cat){ document.querySelectorAll('.tab-filter').forEach(btn=>{ btn.classList.remove('text-red-500','border-b-2','border-red-500'); btn.classList.add('text-white/60'); }); event.target.classList.add('text-red-500','border-b-2','border-red-500'); document.querySelectorAll('.item-cardapio').forEach(card=>{ if(card.getAttribute('data-categoria')===cat) card.classList.remove('hidden'); else card.classList.add('hidden'); }); }
+        function adicionarAoCarrinho(nome,preco){ carrinho.push({nome,preco}); atualizarResumo(); const btn=event.target; const txt=btn.innerText; btn.innerText="✓ Adicionado"; btn.classList.add('bg-green-700'); setTimeout(()=>{ btn.innerText=txt; btn.classList.remove('bg-green-700'); },800); }
+        function atualizarResumo(){ const total=carrinho.reduce((s,i)=>s+i.preco,0); document.getElementById('carrinho-total-resumo').innerText=`R$ ${total.toFixed(2)}`; }
+        function abrirCarrinhoModal(){ let lista=carrinho.map((item,idx)=>`<div class="flex justify-between items-center border-b border-white/10 py-2"><span class="text-sm">${item.nome}</span><div><span class="font-mono">R$ ${item.preco.toFixed(2)}</span><button onclick="removerDoCarrinho(${idx})" class="ml-3 text-red-400 text-xs"><i class="fa-regular fa-trash-can"></i></button></div></div>`).join(''); if(lista==='') lista='<div class="text-center text-white/40 py-4">Carrinho vazio</div>'; document.getElementById('carrinho-lista').innerHTML=lista; const sub=carrinho.reduce((s,i)=>s+i.preco,0); let frete=0; if(clienteLogado && clienteLogado.endereco){ const reg=taxasEntrega.find(t=>clienteLogado.endereco.toLowerCase().includes(t.regiao.toLowerCase())); frete=reg?reg.valor:7.0; } document.getElementById('cart-subtotal').innerHTML=`R$ ${sub.toFixed(2)}`; document.getElementById('cart-frete').innerHTML=`R$ ${frete.toFixed(2)}`; document.getElementById('cart-total-final').innerHTML=`R$ ${(sub+frete).toFixed(2)}`; document.getElementById('cart-modal').classList.remove('hidden'); }
+        function removerDoCarrinho(idx){ carrinho.splice(idx,1); atualizarResumo(); abrirCarrinhoModal(); }
+        function fecharCarrinhoModal(){ document.getElementById('cart-modal').classList.add('hidden'); }
+        function finalizarPedidoCompleto(){ if(carrinho.length===0){ alert("Seu carrinho está vazio."); return; } const metodo=document.getElementById
